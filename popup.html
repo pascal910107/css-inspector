@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>CSS Inspector Pro</title>
+    <link rel="stylesheet" href="styles/output.css">
+</head>
+
+<body class="w-80 m-0 p-4 font-sans bg-dark text-white">
+    <div class="flex flex-col gap-4">
+        <div class="flex justify-between items-center">
+            <h1 class="text-lg m-0 text-primary">CSS Inspector Pro</h1>
+            <div class="flex items-center gap-2">
+                <label class="switch">
+                    <input type="checkbox" id="inspectorToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="text-sm">啟用檢查器</span>
+            </div>
+        </div>
+        <div class="bg-dark-light p-3 rounded-lg">
+            <h2 class="text-sm mb-2 text-secondary">快捷鍵</h2>
+            <ul class="list-none p-0 m-0">
+                <li class="my-2 flex items-center gap-2"><kbd
+                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">Alt</kbd> + <kbd
+                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">C</kbd> 複製 CSS</li>
+                <li class="my-2 flex items-center gap-2"><kbd
+                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">Alt</kbd> + <kbd
+                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">H</kbd> 切換檢查器</li>
+                <li class="my-2 flex items-center gap-2"><kbd
+                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">Alt</kbd> + <kbd
+                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">P</kbd> 固定/解除固定視窗</li>
+            </ul>
+        </div>
+        <div class="bg-dark-light p-3 rounded-lg">
+            <h2 class="text-sm mb-2 text-secondary">設定</h2>
+            <div class="my-2">
+                <label class="flex items-start" title="顯示瀏覽器實際計算後的樣式值，而不是原始 CSS 值">
+                    <input type="checkbox" id="showComputedStyles" class="mr-2">
+                    <div class="flex flex-col justify-start items-start">
+                        顯示計算後的樣式
+                        <small class="block text-xs text-gray-400 mt-0.5">
+                            例如：'2em' 會顯示為 '32px'
+                        </small>
+                    </div>
+                </label>
+            </div>
+            <div class="my-2">
+                <label class="flex items-start" title="包含 -webkit-、-moz- 等瀏覽器特定前綴">
+                    <input type="checkbox" id="includeVendorPrefixes" class="mr-2">
+                    <div class="flex flex-col justify-start items-start">
+                        包含瀏覽器前綴
+                        <small class="block text-xs text-gray-400 mt-0.5">
+                            例如：'-webkit-transform'
+                        </small>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="bg-dark-light p-3 rounded-lg">
+            <h2 class="text-sm mb-2 text-secondary">提示</h2>
+            <ul class="list-none p-0 m-0">
+                <li class="my-2 text-sm text-gray-300 before:content-['💡'] before:mr-2">固定視窗後可以拖曳標題列移動位置</li>
+                <li class="my-2 text-sm text-gray-300 before:content-['💡'] before:mr-2">雙擊複製按鈕可複製選擇器</li>
+            </ul>
+        </div>
+    </div>
+    <script src="scripts/popup.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .switch {
+    @apply relative inline-block w-10 h-5;
+  }
+  
+  .switch input {
+    @apply opacity-0 w-0 h-0;
+  }
+  
+  .slider {
+    @apply absolute cursor-pointer inset-0 bg-[#333] transition-all duration-[400ms] rounded-full;
+  }
+  
+  .slider:before {
+    @apply absolute content-[''] h-4 w-4 left-0.5 bottom-0.5 bg-white transition-all duration-[400ms] rounded-full;
+  }
+  
+  input:checked + .slider {
+    @apply bg-success;
+  }
+  
+  input:checked + .slider:before {
+    @apply translate-x-5;
+  }
+
+  .css-inspector-tooltip {
+    @apply fixed z-[999999] bg-dark text-white rounded-lg shadow-lg font-sans text-sm min-w-[300px] max-w-[500px] max-h-[400px] overflow-y-auto p-3 pointer-events-auto;
+  }
+
+  .tooltip-header {
+    @apply flex justify-between items-center mb-2.5 pb-2 border-b border-[#333];
+  }
+
+  .element-tag {
+    @apply text-primary font-mono;
+  }
+
+  .copy-button {
+    @apply bg-success text-white border-none px-3 py-1.5 rounded cursor-pointer text-xs transition-colors duration-[200ms] hover:bg-[#45a049];
+  }
+
+  .css-property {
+    @apply my-1 font-mono leading-relaxed;
+  }
+
+  .property-name {
+    @apply text-[#e06c75];
+  }
+
+  .property-value {
+    @apply text-[#98c379] ml-2;
+  }
+
+  .css-inspector-highlight {
+    @apply outline-2 outline-dashed outline-primary outline-offset-2 !important;
+  }
+
+  .css-inspector-notification {
+    @apply fixed bottom-5 right-5 bg-success text-white px-5 py-3 rounded z-[1000000] animate-fadeInOut;
+  }
+
+  .pin-button {
+    @apply bg-dark-light text-gray-400 border border-[#444] px-2 py-1 rounded cursor-pointer text-sm transition-all duration-[200ms] flex items-center justify-center mr-2 hover:bg-[#383838] hover:text-white hover:border-[#666];
+  }
+
+  .pin-button.active {
+    @apply bg-primary text-white border-primary hover:bg-[#528bbc] hover:border-[#528bbc];
+  }
+
+  @keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+  }
+} 

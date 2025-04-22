@@ -1,0 +1,12 @@
+{
+  "name": "css-inspector",
+  "version": "1.0.0",
+  "description": "CSS Inspector Chrome Extension",
+  "scripts": {
+    "build": "tailwindcss -i ./styles/input.css -o ./styles/output.css",
+    "dev": "tailwindcss -i ./styles/input.css -o ./styles/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+} 
