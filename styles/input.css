@@ -52,7 +52,7 @@
   }
 
   .property-value {
-    @apply text-[#98c379] ml-2 min-w-[100px] px-2 py-1 rounded hover:bg-[#2c2c2c] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+    @apply text-[#98c379] min-w-[100px] px-2 py-1 rounded hover:bg-[#2c2c2c] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
   }
 
   .css-inspector-highlight {
@@ -60,7 +60,7 @@
   }
 
   .css-inspector-notification {
-    @apply fixed bottom-5 right-5 bg-success text-white px-5 py-3 rounded z-[1000000] animate-fadeInOut;
+    @apply fixed bottom-5 right-5 bg-success text-white p-4 rounded-lg z-[1000000] animate-fadeInOut min-w-[200px] shadow-lg flex items-center justify-center text-center;
   }
 
   .pin-button {
@@ -68,11 +68,96 @@
   }
 
   .pin-button.active {
-    @apply bg-button-active text-white border-button-active hover:bg-button-active hover:border-button-active;
+    @apply bg-primary text-white border-primary hover:bg-primary hover:border-primary;
   }
 
   .reset-button {
     @apply bg-button-default text-white border border-button-border px-2 py-1 rounded cursor-pointer text-sm transition-all duration-[200ms] flex items-center justify-center w-8 h-8 hover:bg-button-hover hover:border-button-border-hover;
+  }
+
+  .select-mode-button {
+    @apply bg-button-default text-white border border-button-border px-2 py-1 rounded cursor-pointer text-sm transition-all duration-[200ms] flex items-center justify-center w-8 h-8 hover:bg-button-hover hover:border-button-border-hover;
+  }
+
+  .select-mode-button.active {
+    @apply bg-primary text-white border-primary hover:bg-primary hover:border-primary;
+  }
+
+  /* Popup styles */
+  body {
+    @apply w-80 m-0 p-4 font-sans bg-dark text-white;
+  }
+
+  .container {
+    @apply flex flex-col gap-4;
+  }
+
+  h1 {
+    @apply text-lg m-0 text-primary;
+  }
+
+  h2 {
+    @apply text-sm m-0 mb-2 text-secondary;
+  }
+
+  .header {
+    @apply flex justify-between items-center;
+  }
+
+  .toggle-container {
+    @apply flex items-center gap-2;
+  }
+
+  .toggle-label {
+    @apply text-sm;
+  }
+
+  .shortcuts {
+    @apply bg-dark-light p-3 rounded-lg;
+  }
+
+  .shortcuts ul {
+    @apply list-none p-0 m-0;
+  }
+
+  .shortcuts li {
+    @apply my-2 flex items-center gap-2;
+  }
+
+  kbd {
+    @apply bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs;
+  }
+
+  .settings {
+    @apply bg-dark-light p-3 rounded-lg;
+  }
+
+  .setting-item {
+    @apply my-2 flex items-center;
+  }
+
+  .setting-item input[type="checkbox"] {
+    @apply mr-2;
+  }
+
+  .setting-description {
+    @apply block text-xs text-gray-400 mt-0.5 ml-6;
+  }
+
+  .tips {
+    @apply bg-dark-light p-3 rounded-lg;
+  }
+
+  .tips ul {
+    @apply list-none p-0 m-0;
+  }
+
+  .tips li {
+    @apply my-2 text-sm text-gray-300;
+  }
+
+  .tips li::before {
+    @apply content-['💡'] mr-2;
   }
 
   @keyframes fadeInOut {

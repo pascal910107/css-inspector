@@ -53,8 +53,8 @@ css-inspector/
 │   ├── content.js       # 內容腳本
 │   └── popup.js         # 彈出視窗腳本
 ├── styles/
-│   ├── content.css      # 內容樣式
-│   └── popup.css        # 彈出視窗樣式
+│   ├── input.css      # 所有樣式（使用 Tailwind）
+│   └── output.css     # Tailwind 生成的樣式
 └── icons/               # 擴充功能圖示
 ```
 

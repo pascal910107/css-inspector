@@ -40,9 +40,12 @@ class CSSInspector {
     this.tooltip.innerHTML = `
           <div class="tooltip-header" draggable="true">
             <span class="element-tag"></span>
-            <div class="tooltip-controls" style="display:flex;align-items:center;gap:4px;">
+            <div class="tooltip-controls flex items-center gap-1">
               <button class="reset-button" style="display:none;" title="還原所有修改">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw-icon lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              </button>
+              <button class="select-mode-button" title="切換選取模式 (Alt + S)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mouse-pointer2-icon lucide-mouse-pointer-2"><path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"/></svg>
               </button>
               <button class="pin-button" title="固定視窗 (Alt + P)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pin-icon lucide-pin"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>
@@ -86,6 +89,10 @@ class CSSInspector {
     this.tooltip
       .querySelector(".pin-button")
       .addEventListener("click", () => this.toggleFixed());
+
+    this.tooltip
+      .querySelector(".select-mode-button")
+      .addEventListener("click", () => this.toggleSelectionMode());
 
     this.tooltip
       .querySelector(".reset-button")
@@ -136,6 +143,9 @@ class CSSInspector {
   handleMouseOver(e) {
     if (!this.isActive || (this.selectionMode && this.selectedElement)) return;
 
+    // 如果滑鼠在工具視窗內，不處理
+    if (this.tooltip.contains(e.target)) return;
+
     this.hoveredElement = e.target;
     if (this.hoveredElement === this.tooltip) return;
 
@@ -148,6 +158,9 @@ class CSSInspector {
 
   handleMouseOut(e) {
     if (!this.isActive || (this.selectionMode && this.selectedElement)) return;
+
+    // 如果滑鼠移動到工具視窗內，不處理
+    if (this.tooltip.contains(e.relatedTarget)) return;
 
     if (this.hoveredElement)
       this.hoveredElement.classList.remove("css-inspector-highlight");
@@ -358,6 +371,13 @@ class CSSInspector {
       this.selectionMode = message.isActive;
       if (!this.selectionMode) this.deselectElement();
     }
+  }
+
+  toggleSelectionMode() {
+    this.selectionMode = !this.selectionMode;
+    const button = this.tooltip.querySelector(".select-mode-button");
+    button.classList.toggle("active", this.selectionMode);
+    if (!this.selectionMode) this.deselectElement();
   }
 }
 
