@@ -1,42 +1,67 @@
+/*  ==============================
+    CSS Inspector Pro – content.js
+    新增：
+    1. 「選取模式」(selectionMode) 切換
+    2. 點擊頁面元素可選取 / 取消選取
+    3. 選取後可即時編輯樣式並預覽，並可一鍵還原
+    ============================== */
 class CSSInspector {
   constructor() {
-    this.isActive = false;
-    this.tooltip = null;
-    this.hoveredElement = null;
-    this.isFixed = false;
+    /* ===== 先前就有的狀態 ===== */
+    this.isActive = false; // 檢查器總開關
+    this.tooltip = null; // 提示視窗
+    this.hoveredElement = null; // 滑鼠下的元素
+    this.isFixed = false; // 視窗是否固定
     this.isDragging = false;
     this.dragStartX = 0;
     this.dragStartY = 0;
     this.lastMousePosition = { x: 0, y: 0 };
+
+    /* ===== 新增狀態 ===== */
+    this.selectionMode = false; // 是否進入「選取模式」
+    this.selectedElement = null; // 目前被選取的元素
+    this.originalStyles = new WeakMap(); // 儲存編輯前的原始樣式以便還原
+
     this.init();
   }
 
+  /* ---------- 初始化 ---------- */
   init() {
     this.createTooltip();
     this.bindEvents();
     this.setupKeyboardShortcuts();
   }
 
+  /* ---------- 建立提示框 ---------- */
   createTooltip() {
     this.tooltip = document.createElement("div");
     this.tooltip.className = "css-inspector-tooltip";
     this.tooltip.style.display = "none";
     this.tooltip.innerHTML = `
-      <div class="tooltip-header" draggable="true">
-        <span class="element-tag"></span>
-        <div class="tooltip-controls" style="display: flex; align-items: center; gap: 4px;">
-          <button class="pin-button" title="固定視窗 (Alt + P)">📌</button>
-          <button class="copy-button">複製 CSS</button>
-        </div>
-      </div>
-      <div class="tooltip-content">
-        <div class="css-properties"></div>
-      </div>
-    `;
+          <div class="tooltip-header" draggable="true">
+            <span class="element-tag"></span>
+            <div class="tooltip-controls" style="display:flex;align-items:center;gap:4px;">
+              <button class="reset-button" style="display:none;" title="還原所有修改">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw-icon lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              </button>
+              <button class="pin-button" title="固定視窗 (Alt + P)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pin-icon lucide-pin"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>
+              </button>
+              <button class="copy-button" title="複製 CSS (Alt + C)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy-icon lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="tooltip-content">
+            <div class="css-properties"></div>
+          </div>
+        `;
     document.body.appendChild(this.tooltip);
   }
 
+  /* ---------- 事件繫結 ---------- */
   bindEvents() {
+    /* ===== 滑鼠移動、進出 ===== */
     document.addEventListener("mouseover", this.handleMouseOver.bind(this));
     document.addEventListener("mouseout", this.handleMouseOut.bind(this));
     document.addEventListener("mousemove", (e) => {
@@ -44,127 +69,135 @@ class CSSInspector {
       this.updateTooltipPosition(e);
     });
 
+    /* ===== 點擊選取 / 取消選取 ===== */
+    document.addEventListener("click", this.handleClick.bind(this), true);
+
+    /* ===== 拖曳視窗 ===== */
     const header = this.tooltip.querySelector(".tooltip-header");
     header.addEventListener("dragstart", this.handleDragStart.bind(this));
     header.addEventListener("drag", this.handleDrag.bind(this));
     header.addEventListener("dragend", this.handleDragEnd.bind(this));
 
-    this.tooltip.querySelector(".copy-button").addEventListener("click", () => {
-      this.copyCSS();
-    });
+    /* ===== 控制按鈕 ===== */
+    this.tooltip
+      .querySelector(".copy-button")
+      .addEventListener("click", () => this.copyCSS());
 
-    this.tooltip.querySelector(".pin-button").addEventListener("click", () => {
-      this.toggleFixed();
-    });
+    this.tooltip
+      .querySelector(".pin-button")
+      .addEventListener("click", () => this.toggleFixed());
+
+    this.tooltip
+      .querySelector(".reset-button")
+      .addEventListener("click", () => this.resetStyles());
   }
 
+  /* ---------- 快捷鍵 ---------- */
   setupKeyboardShortcuts() {
     document.addEventListener("keydown", (e) => {
-      if (e.altKey && e.key === "c") {
-        this.copyCSS();
-      } else if (e.altKey && e.key === "h") {
-        this.toggleInspector();
-      } else if (e.altKey && e.key === "p") {
-        this.toggleFixed();
-      }
+      if (e.altKey && e.key === "c") this.copyCSS();
+      else if (e.altKey && e.key === "h") this.toggleInspector();
+      else if (e.altKey && e.key === "p") this.toggleFixed();
+      else if (e.altKey && e.key === "s") this.toggleSelectionMode();
     });
   }
 
+  /* ---------- 拖曳處理 ---------- */
   handleDragStart(e) {
     if (!this.isFixed) return;
-
     this.isDragging = true;
     const rect = this.tooltip.getBoundingClientRect();
     this.dragStartX = e.clientX - rect.left;
     this.dragStartY = e.clientY - rect.top;
 
-    // 創建透明的拖曳圖像
-    const dragImage = document.createElement("div");
-    dragImage.style.opacity = "0";
-    document.body.appendChild(dragImage);
-    e.dataTransfer.setDragImage(dragImage, 0, 0);
-    setTimeout(() => document.body.removeChild(dragImage), 0);
+    const img = document.createElement("div");
+    img.style.opacity = "0";
+    document.body.appendChild(img);
+    e.dataTransfer.setDragImage(img, 0, 0);
+    setTimeout(() => img.remove(), 0);
   }
-
   handleDrag(e) {
     if (!this.isFixed || !this.isDragging || !e.clientX) return;
-
-    const x = e.clientX - this.dragStartX;
-    const y = e.clientY - this.dragStartY;
-
-    this.tooltip.style.left = `${x}px`;
-    this.tooltip.style.top = `${y}px`;
+    this.tooltip.style.left = `${e.clientX - this.dragStartX}px`;
+    this.tooltip.style.top = `${e.clientY - this.dragStartY}px`;
   }
-
-  handleDragEnd(e) {
-    if (!this.isFixed) return;
+  handleDragEnd() {
     this.isDragging = false;
   }
 
+  /* ---------- 固定提示框 ---------- */
   toggleFixed() {
     this.isFixed = !this.isFixed;
     this.tooltip.classList.toggle("fixed");
     this.tooltip.querySelector(".pin-button").classList.toggle("active");
   }
 
+  /* ---------- 滑鼠進出 ---------- */
   handleMouseOver(e) {
-    if (!this.isActive) return;
+    if (!this.isActive || (this.selectionMode && this.selectedElement)) return;
 
     this.hoveredElement = e.target;
     if (this.hoveredElement === this.tooltip) return;
 
-    const styles = this.getElementStyles(this.hoveredElement);
-    this.updateTooltipContent(styles);
+    this.renderElement(this.hoveredElement);
     this.tooltip.style.display = "block";
-    if (!this.isFixed) {
-      this.updateTooltipPosition(e);
-    }
+    if (!this.isFixed) this.updateTooltipPosition(e);
 
     this.hoveredElement.classList.add("css-inspector-highlight");
   }
 
   handleMouseOut(e) {
-    if (!this.isActive) return;
+    if (!this.isActive || (this.selectionMode && this.selectedElement)) return;
 
-    if (this.hoveredElement) {
+    if (this.hoveredElement)
       this.hoveredElement.classList.remove("css-inspector-highlight");
-    }
 
-    if (!this.isFixed && !this.tooltip.contains(e.relatedTarget)) {
+    if (!this.isFixed && !this.tooltip.contains(e.relatedTarget))
       this.tooltip.style.display = "none";
-    }
   }
 
-  updateTooltipPosition(e) {
-    if (
-      !this.isActive ||
-      this.isFixed ||
-      this.tooltip.style.display !== "block"
-    )
-      return;
+  /* ---------- 點擊選取 / 取消 ---------- */
+  handleClick(e) {
+    if (!this.isActive || !this.selectionMode) return;
 
-    const offset = 10;
-    const tooltipRect = this.tooltip.getBoundingClientRect();
-    let x = e.pageX + offset;
-    let y = e.pageY + offset;
+    // 點到提示框本身不處理
+    if (e.target === this.tooltip || this.tooltip.contains(e.target)) return;
 
-    // 確保提示框不會超出視窗範圍
-    if (x + tooltipRect.width > window.innerWidth) {
-      x = e.pageX - tooltipRect.width - offset;
-    }
-    if (y + tooltipRect.height > window.innerHeight) {
-      y = e.pageY - tooltipRect.height - offset;
-    }
+    e.preventDefault();
+    e.stopPropagation();
 
-    this.tooltip.style.left = `${x}px`;
-    this.tooltip.style.top = `${y}px`;
+    if (this.selectedElement === e.target) this.deselectElement();
+    else this.selectElement(e.target);
+  }
+
+  selectElement(el) {
+    this.deselectElement(); // 先取消先前選取
+    this.selectedElement = el;
+    el.classList.add("css-inspector-highlight");
+    this.renderElement(el);
+    this.tooltip.style.display = "block";
+    this.tooltip.querySelector(".reset-button").style.display = "inline-flex";
+  }
+
+  deselectElement() {
+    if (!this.selectedElement) return;
+    this.selectedElement.classList.remove("css-inspector-highlight");
+    this.selectedElement = null;
+    this.tooltip.querySelector(".reset-button").style.display = "none";
+    // 若仍在 hover 狀態，恢復 hover 畫面；否則關閉視窗
+    if (this.hoveredElement) this.renderElement(this.hoveredElement);
+    else this.tooltip.style.display = "none";
+  }
+
+  /* ---------- 呈現元素 CSS ---------- */
+  renderElement(element) {
+    const styles = this.getElementStyles(element);
+    this.updateTooltipContent(element, styles);
   }
 
   getElementStyles(element) {
     const computedStyle = window.getComputedStyle(element);
     const styles = {};
-
-    // 收集重要的 CSS 屬性
     const importantProperties = [
       "display",
       "position",
@@ -183,109 +216,153 @@ class CSSInspector {
       "grid",
       "transform",
     ];
-
     importantProperties.forEach((prop) => {
-      const value = computedStyle.getPropertyValue(prop);
-      if (value && value !== "none" && value !== "normal") {
-        styles[prop] = value;
-      }
+      const v = computedStyle.getPropertyValue(prop);
+      if (v && v !== "none" && v !== "normal") styles[prop] = v.trim();
     });
-
     return styles;
   }
 
-  updateTooltipContent(styles) {
-    const elementTag = this.hoveredElement.tagName.toLowerCase();
-    const elementClasses = Array.from(this.hoveredElement.classList).join(".");
-    const elementId = this.hoveredElement.id
-      ? `#${this.hoveredElement.id}`
-      : "";
-
-    const elementSelector = `${elementTag}${elementId}${
-      elementClasses ? `.${elementClasses}` : ""
+  updateTooltipContent(element, styles) {
+    /* ----- 標題（元素選擇器） ----- */
+    const tag = element.tagName.toLowerCase();
+    const idSel = element.id ? `#${element.id}` : "";
+    const cls = Array.from(element.classList).join(".");
+    this.tooltip.querySelector(".element-tag").textContent = `${tag}${idSel}${
+      cls ? "." + cls : ""
     }`;
-    this.tooltip.querySelector(".element-tag").textContent = elementSelector;
 
-    const propertiesContainer = this.tooltip.querySelector(".css-properties");
-    propertiesContainer.innerHTML = "";
-
-    Object.entries(styles).forEach(([property, value]) => {
-      const propertyElement = document.createElement("div");
-      propertyElement.className = "css-property";
-      propertyElement.innerHTML = `
-        <span class="property-name">${property}:</span>
-        <span class="property-value">${value}</span>
-      `;
-      propertiesContainer.appendChild(propertyElement);
+    /* ----- 屬性列表 ----- */
+    const list = this.tooltip.querySelector(".css-properties");
+    list.innerHTML = "";
+    Object.entries(styles).forEach(([prop, val]) => {
+      const row = document.createElement("div");
+      row.className = "css-property";
+      row.innerHTML = `
+            <span class="property-name">${prop}:</span>
+            <span class="property-value"${
+              this.selectionMode && this.selectedElement
+                ? " contenteditable"
+                : ""
+            }>${val}</span>
+          `;
+      if (this.selectionMode && this.selectedElement) {
+        const valueEl = row.querySelector(".property-value");
+        // 每次編輯即時套用
+        valueEl.addEventListener("input", () => {
+          // 儲存原始值
+          if (!this.originalStyles.has(element))
+            this.originalStyles.set(element, {});
+          const orig = this.originalStyles.get(element);
+          if (!(prop in orig)) orig[prop] = element.style[prop] || "";
+          element.style[prop] = valueEl.textContent.trim();
+          this.tooltip.querySelector(".reset-button").style.display =
+            "inline-flex";
+        });
+      }
+      list.appendChild(row);
     });
   }
 
-  copyCSS() {
-    if (!this.hoveredElement) return;
+  /* ---------- 還原樣式 ---------- */
+  resetStyles() {
+    if (!this.selectedElement) return;
+    const orig = this.originalStyles.get(this.selectedElement) || {};
+    Object.entries(orig).forEach(([prop, val]) => {
+      if (val) this.selectedElement.style[prop] = val;
+      else this.selectedElement.style.removeProperty(prop);
+    });
+    this.originalStyles.delete(this.selectedElement);
+    this.renderElement(this.selectedElement);
+    this.tooltip.querySelector(".reset-button").style.display = "none";
+  }
 
-    const styles = this.getElementStyles(this.hoveredElement);
-    const cssText = Object.entries(styles)
-      .map(([property, value]) => `${property}: ${value};`)
+  /* ---------- 視窗位置 ---------- */
+  updateTooltipPosition(e) {
+    if (
+      !this.isActive ||
+      this.isFixed ||
+      this.tooltip.style.display !== "block"
+    )
+      return;
+    const offset = 10;
+    const rect = this.tooltip.getBoundingClientRect();
+    let x = e.pageX + offset;
+    let y = e.pageY + offset;
+    if (x + rect.width > window.innerWidth) x = e.pageX - rect.width - offset;
+    if (y + rect.height > window.innerHeight)
+      y = e.pageY - rect.height - offset;
+    this.tooltip.style.left = `${x}px`;
+    this.tooltip.style.top = `${y}px`;
+  }
+
+  /* ---------- 複製 CSS ---------- */
+  copyCSS() {
+    const el = this.selectedElement || this.hoveredElement;
+    if (!el) return;
+
+    const cssText = Object.entries(this.getElementStyles(el))
+      .map(([p, v]) => `${p}: ${v};`)
       .join("\n");
 
-    navigator.clipboard.writeText(cssText).then(() => {
-      this.showCopyNotification();
-    });
+    navigator.clipboard
+      .writeText(cssText)
+      .then(() => this.showCopyNotification());
   }
 
   showCopyNotification() {
-    const notification = document.createElement("div");
-    notification.className = "css-inspector-notification";
-    notification.textContent = "CSS 已複製到剪貼簿";
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-      notification.remove();
-    }, 2000);
+    const note = document.createElement("div");
+    note.className = "css-inspector-notification";
+    note.textContent = "CSS 已複製到剪貼簿";
+    document.body.appendChild(note);
+    setTimeout(() => note.remove(), 2000);
   }
 
+  /* ---------- 快捷鍵呼叫 ---------- */
   toggleInspector() {
     this.isActive = !this.isActive;
     if (!this.isActive) {
       this.tooltip.style.display = "none";
-      if (this.hoveredElement) {
+      this.deselectElement();
+      if (this.hoveredElement)
         this.hoveredElement.classList.remove("css-inspector-highlight");
-      }
     } else {
       this.tooltip.style.display = "block";
-      // 使用最後記錄的滑鼠位置來更新視窗位置
       this.updateTooltipPosition({
         pageX: this.lastMousePosition.x,
         pageY: this.lastMousePosition.y,
       });
-
-      // 獲取當前滑鼠位置的元素
       const element = document.elementFromPoint(
         this.lastMousePosition.x,
         this.lastMousePosition.y
       );
       if (element && element !== this.tooltip) {
         this.hoveredElement = element;
-        const styles = this.getElementStyles(element);
-        this.updateTooltipContent(styles);
+        this.renderElement(element);
         element.classList.add("css-inspector-highlight");
       }
     }
   }
-}
 
-// 初始化檢查器
-const inspector = new CSSInspector();
-
-// 監聽來自 popup 的消息
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "toggleInspector") {
-    inspector.isActive = message.isActive;
-    if (!message.isActive) {
-      inspector.tooltip.style.display = "none";
-      if (inspector.hoveredElement) {
-        inspector.hoveredElement.classList.remove("css-inspector-highlight");
+  /* ---------- 收訊息 ---------- */
+  handleRuntimeMessage(message) {
+    if (message.action === "toggleInspector") {
+      this.isActive = message.isActive;
+      if (!message.isActive) {
+        this.tooltip.style.display = "none";
+        this.deselectElement();
+        if (this.hoveredElement)
+          this.hoveredElement.classList.remove("css-inspector-highlight");
       }
+    } else if (message.action === "toggleSelectMode") {
+      this.selectionMode = message.isActive;
+      if (!this.selectionMode) this.deselectElement();
     }
   }
-});
+}
+
+/* ===== 初始化 ===== */
+const inspector = new CSSInspector();
+chrome.runtime.onMessage.addListener((msg) =>
+  inspector.handleRuntimeMessage(msg)
+);

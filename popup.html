@@ -7,16 +7,25 @@
     <link rel="stylesheet" href="styles/output.css">
 </head>
 
-<body class="w-80 m-0 p-4 font-sans bg-dark text-white">
+<body class="w-96 m-0 p-4 font-sans bg-dark text-white">
     <div class="flex flex-col gap-4">
         <div class="flex justify-between items-center">
             <h1 class="text-lg m-0 text-primary">CSS Inspector Pro</h1>
-            <div class="flex items-center gap-2">
-                <label class="switch">
-                    <input type="checkbox" id="inspectorToggle">
-                    <span class="slider"></span>
-                </label>
-                <span class="text-sm">啟用檢查器</span>
+            <div class="flex flex-col justify-center items-start gap-2">
+                <div class="flex items-center gap-2">
+                    <label class="switch">
+                        <input type="checkbox" id="inspectorToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="text-sm">啟用檢查器</span>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <label class="switch">
+                        <input type="checkbox" id="selectModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="text-sm">選取模式</span>
+                </div>
             </div>
         </div>
         <div class="bg-dark-light p-3 rounded-lg">

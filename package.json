@@ -4,9 +4,10 @@
   "description": "CSS Inspector Chrome Extension",
   "scripts": {
     "build": "tailwindcss -i ./styles/input.css -o ./styles/output.css",
-    "dev": "tailwindcss -i ./styles/input.css -o ./styles/output.css --watch"
+    "dev": "tailwindcss -i ./styles/input.css -o ./styles/output.css --watch",
+    "postinstall": "npx update-browserslist-db@latest"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.1"
   }
-} 
+}

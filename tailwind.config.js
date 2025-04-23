@@ -4,11 +4,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#61afef",
+        primary: "#81a5f9",
         secondary: "#c678dd",
         dark: "#1e1e1e",
         "dark-light": "#2c2c2c",
         success: "#4CAF50",
+        button: {
+          default: "#2c2c2c",
+          hover: "#383838",
+          active: "#9d2d2d",
+          border: "#444",
+          "border-hover": "#666",
+        },
       },
       keyframes: {
         fadeInOut: {
