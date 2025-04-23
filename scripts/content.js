@@ -316,9 +316,17 @@ class CSSInspector {
     const el = this.selectedElement || this.hoveredElement;
     if (!el) return;
 
-    const cssText = Object.entries(this.getElementStyles(el))
-      .map(([p, v]) => `${p}: ${v};`)
-      .join("\n");
+    // 取得選擇器
+    const tag = el.tagName.toLowerCase();
+    const idSel = el.id ? `#${el.id}` : "";
+    const cls = Array.from(el.classList).join(".");
+    const selector = `${tag}${idSel}${cls ? "." + cls : ""}`;
+
+    // 取得樣式
+    const styles = this.getElementStyles(el);
+    const cssText = `${selector} {\n${Object.entries(styles)
+      .map(([p, v]) => `  ${p}: ${v};`)
+      .join("\n")}\n}`;
 
     navigator.clipboard
       .writeText(cssText)
