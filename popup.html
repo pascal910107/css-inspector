@@ -3,14 +3,22 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>CSS Inspector Pro</title>
+    <title data-i18n="title">CSS Inspector Pro</title>
     <link rel="stylesheet" href="styles/output.css">
 </head>
 
 <body class="w-96 m-0 p-4 font-sans bg-dark text-white">
     <div class="flex flex-col gap-4">
         <div class="flex justify-between items-center">
-            <h1 class="text-lg m-0 text-primary">CSS Inspector Pro</h1>
+            <div class="flex flex-col gap-2">
+                <h1 class="text-lg m-0 text-primary" data-i18n="title">CSS Inspector Pro</h1>
+                <div class="flex items-center gap-2">
+                    <select id="languageSelect" class="bg-dark-light text-white px-2 py-1 rounded text-sm">
+                        <option value="zh-TW" data-i18n="chinese">中文</option>
+                        <option value="en" data-i18n="english">English</option>
+                    </select>
+                </div>
+            </div>
             <div class="flex flex-col justify-center items-start gap-2">
                 <div class="flex items-center gap-2">
                     <label class="switch">
@@ -29,41 +37,45 @@
             </div>
         </div>
         <div class="bg-dark-light p-3 rounded-lg">
-            <h2 class="text-sm mb-2 text-secondary">快捷鍵</h2>
+            <h2 class="text-sm mb-2 text-secondary" data-i18n="shortcuts">快捷鍵</h2>
             <ul class="list-none p-0 m-0">
                 <li class="my-2 flex items-center gap-2"><kbd
                         class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">Alt</kbd> + <kbd
-                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">C</kbd> 複製 CSS</li>
+                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">C</kbd> <span
+                        data-i18n="copyCSS">複製 CSS</span></li>
                 <li class="my-2 flex items-center gap-2"><kbd
                         class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">Alt</kbd> + <kbd
-                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">H</kbd> 切換檢查器</li>
+                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">H</kbd> <span
+                        data-i18n="toggleInspector">切換檢查器</span></li>
                 <li class="my-2 flex items-center gap-2"><kbd
                         class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">Alt</kbd> + <kbd
-                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">P</kbd> 固定/解除固定視窗</li>
+                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">P</kbd> <span
+                        data-i18n="togglePin">固定/解除固定視窗</span></li>
                 <li class="my-2 flex items-center gap-2"><kbd
                         class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">Alt</kbd> + <kbd
-                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">S</kbd> 切換選取模式</li>
+                        class="bg-[#333] text-white px-1.5 py-0.5 rounded font-mono text-xs">S</kbd> <span
+                        data-i18n="toggleSelection">切換選取模式</span></li>
             </ul>
         </div>
         <div class="bg-dark-light p-3 rounded-lg">
-            <h2 class="text-sm mb-2 text-secondary">設定</h2>
+            <h2 class="text-sm mb-2 text-secondary" data-i18n="settings">設定</h2>
             <div class="my-2">
-                <label class="flex items-start" title="顯示瀏覽器實際計算後的樣式值，而不是原始 CSS 值">
+                <label class="flex items-start" data-i18n-title="showComputedStylesTitle">
                     <input type="checkbox" id="showComputedStyles" class="mr-2">
                     <div class="flex flex-col justify-start items-start">
-                        顯示計算後的樣式
-                        <small class="block text-xs text-gray-400 mt-0.5">
+                        <span data-i18n="showComputedStyles">顯示計算後的樣式</span>
+                        <small class="block text-xs text-gray-400 mt-0.5" data-i18n="showComputedStylesExample">
                             例如：'2em' 會顯示為 '32px'
                         </small>
                     </div>
                 </label>
             </div>
             <div class="my-2">
-                <label class="flex items-start" title="包含 -webkit-、-moz- 等瀏覽器特定前綴">
+                <label class="flex items-start" data-i18n-title="includeVendorPrefixesTitle">
                     <input type="checkbox" id="includeVendorPrefixes" class="mr-2">
                     <div class="flex flex-col justify-start items-start">
-                        包含瀏覽器前綴
-                        <small class="block text-xs text-gray-400 mt-0.5">
+                        <span data-i18n="includeVendorPrefixes">包含瀏覽器前綴</span>
+                        <small class="block text-xs text-gray-400 mt-0.5" data-i18n="includeVendorPrefixesExample">
                             例如：'-webkit-transform'
                         </small>
                     </div>
@@ -71,13 +83,16 @@
             </div>
         </div>
         <div class="bg-dark-light p-3 rounded-lg">
-            <h2 class="text-sm mb-2 text-secondary">提示</h2>
+            <h2 class="text-sm mb-2 text-secondary" data-i18n="tips">提示</h2>
             <ul class="list-none p-0 m-0">
-                <li class="my-2 text-sm text-gray-300 before:content-['💡'] before:mr-2">固定視窗後可以拖曳標題列移動位置</li>
-                <li class="my-2 text-sm text-gray-300 before:content-['💡'] before:mr-2">雙擊複製按鈕可複製選擇器</li>
+                <li class="my-2 text-sm text-gray-300 before:content-['💡'] before:mr-2" data-i18n="tipDrag">
+                    固定視窗後可以拖曳標題列移動位置</li>
+                <li class="my-2 text-sm text-gray-300 before:content-['💡'] before:mr-2" data-i18n="tipDoubleClick">
+                    雙擊複製按鈕可複製選擇器</li>
             </ul>
         </div>
     </div>
+    <script src="scripts/i18n.js"></script>
     <script src="scripts/popup.js"></script>
 </body>
 

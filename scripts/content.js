@@ -1,5 +1,5 @@
 /*  ==============================
-    CSS Inspector Pro – content.js
+    CSS Inspector Pro – content.js
     新增：
     1. 「選取模式」(selectionMode) 切換
     2. 點擊頁面元素可選取 / 取消選取
@@ -21,6 +21,8 @@ class CSSInspector {
     this.selectionMode = false; // 是否進入「選取模式」
     this.selectedElement = null; // 目前被選取的元素
     this.originalStyles = new WeakMap(); // 儲存編輯前的原始樣式以便還原
+    this.currentLanguage =
+      localStorage.getItem("css-inspector-language") || "zh-TW";
 
     this.init();
   }
@@ -326,7 +328,10 @@ class CSSInspector {
   showCopyNotification() {
     const note = document.createElement("div");
     note.className = "css-inspector-notification";
-    note.textContent = "CSS 已複製到剪貼簿";
+    note.textContent =
+      this.currentLanguage === "zh-TW"
+        ? "CSS 已複製到剪貼簿"
+        : "CSS copied to clipboard";
     document.body.appendChild(note);
     setTimeout(() => note.remove(), 2000);
   }
@@ -370,6 +375,9 @@ class CSSInspector {
     } else if (message.action === "toggleSelectMode") {
       this.selectionMode = message.isActive;
       if (!this.selectionMode) this.deselectElement();
+    } else if (message.action === "updateLanguage") {
+      this.currentLanguage = message.language;
+      this.updateTooltipContent(this.selectedElement || this.hoveredElement);
     }
   }
 
