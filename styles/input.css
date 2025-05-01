@@ -28,58 +28,38 @@
   }
 
   .css-inspector-tooltip {
-    @apply fixed z-[999999] bg-dark text-white rounded-lg shadow-lg font-sans text-sm min-w-[300px] max-w-[500px] max-h-[400px] overflow-y-auto p-3 pointer-events-auto;
+    @apply fixed z-[999999] bg-dark text-white rounded-lg shadow-lg font-sans text-sm min-w-[300px] max-w-[500px] max-h-[500px] overflow-y-auto p-3 pointer-events-auto;
   }
 
-  .tooltip-header {
-    @apply flex justify-between items-center mb-2.5 pb-2 border-b border-[#333];
-  }
-
-  .element-tag {
-    @apply text-primary font-mono;
-  }
-
-  .copy-button {
+  .copy-btn {
     @apply bg-button-default text-white border border-button-border px-2 py-1 rounded cursor-pointer text-sm transition-all duration-[200ms] flex items-center justify-center w-8 h-8 hover:bg-button-hover hover:border-button-border-hover;
-  }
-
-  .css-property {
-    @apply my-1 font-mono leading-relaxed;
-  }
-
-  .property-name {
-    @apply text-[#e06c75];
   }
 
   .property-value {
     @apply text-[#98c379] min-w-[100px] px-2 py-1 rounded hover:bg-[#2c2c2c] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
   }
 
-  .css-inspector-highlight {
-    @apply outline-2 outline-dashed outline-primary outline-offset-2 !important;
-  }
-
   .css-inspector-notification {
     @apply fixed bottom-5 right-5 bg-success text-white p-4 rounded-lg z-[1000000] animate-fadeInOut min-w-[200px] shadow-lg flex items-center justify-center text-center;
   }
 
-  .pin-button {
+  .pin-btn {
     @apply bg-button-default text-white border border-button-border px-2 py-1 rounded cursor-pointer text-sm transition-all duration-[200ms] flex items-center justify-center w-8 h-8 hover:bg-button-hover hover:border-button-border-hover;
   }
 
-  .pin-button.active {
+  .pin-btn.active {
     @apply bg-primary text-white border-primary hover:bg-primary hover:border-primary;
   }
 
-  .reset-button {
+  .reset-btn {
     @apply bg-button-default text-white border border-button-border px-2 py-1 rounded cursor-pointer text-sm transition-all duration-[200ms] flex items-center justify-center w-8 h-8 hover:bg-button-hover hover:border-button-border-hover;
   }
 
-  .select-mode-button {
+  .select-btn {
     @apply bg-button-default text-white border border-button-border px-2 py-1 rounded cursor-pointer text-sm transition-all duration-[200ms] flex items-center justify-center w-8 h-8 hover:bg-button-hover hover:border-button-border-hover;
   }
 
-  .select-mode-button.active {
+  .select-btn.active {
     @apply bg-primary text-white border-primary hover:bg-primary hover:border-primary;
   }
 

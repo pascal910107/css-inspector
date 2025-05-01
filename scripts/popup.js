@@ -1,11 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const inspectorToggle = document.getElementById("inspectorToggle");
-  const selectModeToggle = document.getElementById("selectModeToggle");
-  const showComputedStyles = document.getElementById("showComputedStyles");
-  const includeVendorPrefixes = document.getElementById(
-    "includeVendorPrefixes"
-  );
-  const languageSelect = document.getElementById("languageSelect");
+  const $ = (id) => document.getElementById(id);
+  const inspectorToggle = $("inspectorToggle");
+  const selectModeToggle = $("selectModeToggle");
+  const showComputedStyles = $("showComputedStyles");
+  const includeVendorPrefixes = $("includeVendorPrefixes");
+  const showPseudoElements = $("showPseudoElements");
+  const showPseudoExtras = $("showPseudoExtras");
+  const languageSelect = $("languageSelect");
 
   /* ----- 載入儲存設定 ----- */
   chrome.storage.sync.get(
@@ -14,29 +15,48 @@ document.addEventListener("DOMContentLoaded", () => {
       selectModeActive: false,
       showComputedStyles: true,
       includeVendorPrefixes: false,
+      showPseudoElements: false,
+      showPseudoExtras: false,
     },
-    (items) => {
-      inspectorToggle.checked = items.inspectorActive;
-      selectModeToggle.checked = items.selectModeActive;
-      showComputedStyles.checked = items.showComputedStyles;
-      includeVendorPrefixes.checked = items.includeVendorPrefixes;
+    (cfg) => {
+      inspectorToggle.checked = cfg.inspectorActive;
+      selectModeToggle.checked = cfg.selectModeActive;
+      showComputedStyles.checked = cfg.showComputedStyles;
+      includeVendorPrefixes.checked = cfg.includeVendorPrefixes;
+      showPseudoElements.checked = cfg.showPseudoElements;
+      showPseudoExtras.checked = cfg.showPseudoExtras;
 
+      // 初次同步狀態
       const send = (action, isActive) => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          if (!tabs[0]) return;
           chrome.tabs.sendMessage(tabs[0].id, { action, isActive });
         });
       };
-      if (items.inspectorActive) send("toggleInspector", items.inspectorActive);
-      if (items.selectModeActive)
-        send("toggleSelectMode", items.selectModeActive);
+      if (cfg.inspectorActive) send("toggleInspector", cfg.inspectorActive);
+      if (cfg.selectModeActive) send("toggleSelectMode", cfg.selectModeActive);
     }
   );
+
+  /* ----- 更新存檔並即時推送 ----- */
+  const updateSetting = (key, value) => {
+    chrome.storage.sync.set({ [key]: value });
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs[0]) return;
+      chrome.tabs.sendMessage(tabs[0].id, {
+        action: "updateSetting",
+        setting: key,
+        value,
+      });
+    });
+  };
 
   /* ----- 啟用 / 停用檢查器 ----- */
   inspectorToggle.addEventListener("change", () => {
     const isActive = inspectorToggle.checked;
     chrome.storage.sync.set({ inspectorActive: isActive });
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs[0]) return;
       chrome.tabs.sendMessage(tabs[0].id, {
         action: "toggleInspector",
         isActive,
@@ -49,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const isActive = selectModeToggle.checked;
     chrome.storage.sync.set({ selectModeActive: isActive });
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs[0]) return;
       chrome.tabs.sendMessage(tabs[0].id, {
         action: "toggleSelectMode",
         isActive,
@@ -58,21 +79,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ----- 其它設定 ----- */
   showComputedStyles.addEventListener("change", () =>
-    chrome.storage.sync.set({ showComputedStyles: showComputedStyles.checked })
+    updateSetting("showComputedStyles", showComputedStyles.checked)
   );
   includeVendorPrefixes.addEventListener("change", () =>
-    chrome.storage.sync.set({
-      includeVendorPrefixes: includeVendorPrefixes.checked,
-    })
+    updateSetting("includeVendorPrefixes", includeVendorPrefixes.checked)
+  );
+  showPseudoElements.addEventListener("change", () =>
+    updateSetting("showPseudoElements", showPseudoElements.checked)
+  );
+  showPseudoExtras.addEventListener("change", () =>
+    updateSetting("showPseudoExtras", showPseudoExtras.checked)
   );
 
-  // 監聽語言變化
+  /* ----- 語系切換 ----- */
   languageSelect.addEventListener("change", () => {
     const language = languageSelect.value;
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs[0]) return;
       chrome.tabs.sendMessage(tabs[0].id, {
         action: "updateLanguage",
-        language: language,
+        language,
       });
     });
   });

@@ -59,28 +59,52 @@
         </div>
         <div class="bg-dark-light p-3 rounded-lg">
             <h2 class="text-sm mb-2 text-secondary" data-i18n="settings">設定</h2>
+            <!-- 1. 顯示計算後樣式 -->
             <div class="my-2">
-                <label class="flex items-start" data-i18n-title="showComputedStylesTitle">
-                    <input type="checkbox" id="showComputedStyles" class="mr-2">
-                    <div class="flex flex-col justify-start items-start">
+                <label class="flex items-start">
+                    <input type="checkbox" id="showComputedStyles" class="mr-2" />
+                    <div class="flex flex-col">
                         <span data-i18n="showComputedStyles">顯示計算後的樣式</span>
-                        <small class="block text-xs text-gray-400 mt-0.5" data-i18n="showComputedStylesExample">
-                            例如：'2em' 會顯示為 '32px'
-                        </small>
+                        <small class="text-xs text-gray-400 mt-0.5" data-i18n="showComputedStylesExample">例如：'2em' 會顯示為 '32px'</small>
                     </div>
                 </label>
             </div>
+
+            <!-- 2. 包含瀏覽器前綴 -->
             <div class="my-2">
-                <label class="flex items-start" data-i18n-title="includeVendorPrefixesTitle">
-                    <input type="checkbox" id="includeVendorPrefixes" class="mr-2">
-                    <div class="flex flex-col justify-start items-start">
+                <label class="flex items-start">
+                    <input type="checkbox" id="includeVendorPrefixes" class="mr-2" />
+                    <div class="flex flex-col">
                         <span data-i18n="includeVendorPrefixes">包含瀏覽器前綴</span>
-                        <small class="block text-xs text-gray-400 mt-0.5" data-i18n="includeVendorPrefixesExample">
-                            例如：'-webkit-transform'
-                        </small>
+                        <small class="text-xs text-gray-400 mt-0.5"
+                            data-i18n="includeVendorPrefixesExample">例如：'-webkit-transform'</small>
                     </div>
                 </label>
             </div>
+
+            <!-- 3. 顯示偽元素 -->
+            <div class="my-2">
+                <label class="flex items-start">
+                    <input type="checkbox" id="showPseudoElements" class="mr-2" />
+                    <div class="flex flex-col">
+                        <span data-i18n="showPseudoElements">顯示偽元素</span>
+                        <small class="text-xs text-gray-400 mt-0.5"
+                            data-i18n="showPseudoElementsExample">例如：'::before'</small>
+                    </div>
+                </label>
+            </div>
+
+            <!-- 4. 顯示偽類 / 規則 -->
+            <div class="my-2">
+                <label class="flex items-start">
+                    <input type="checkbox" id="showPseudoExtras" class="mr-2" />
+                    <div class="flex flex-col">
+                        <span data-i18n="showPseudoClasses">顯示偽類 / 規則</span>
+                        <small class="text-xs text-gray-400 mt-0.5"
+                            data-i18n="showPseudoClassesExample">例如：':hover'</small>
+                    </div>
+                </label>
+            </div>            
         </div>
         <div class="bg-dark-light p-3 rounded-lg">
             <h2 class="text-sm mb-2 text-secondary" data-i18n="tips">提示</h2>

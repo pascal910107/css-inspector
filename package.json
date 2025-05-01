@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "CSS Inspector Chrome Extension",
   "scripts": {
-    "build": "tailwindcss -i ./styles/input.css -o ./styles/output.css",
+    "build": "tailwindcss -i ./styles/input.css -o ./styles/output.css --minify",
     "dev": "tailwindcss -i ./styles/input.css -o ./styles/output.css --watch",
     "postinstall": "npx update-browserslist-db@latest"
   },
