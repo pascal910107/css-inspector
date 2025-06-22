@@ -14,7 +14,7 @@
 
 ## 安裝方法
 
-1. 從 Chrome 線上應用程式商店下載安裝
+1. 從 [Chrome 線上應用程式商店](https://chromewebstore.google.com/detail/css-inspector-pro/gneajoakdfoopkamgplmjcdheddpfmoi)下載安裝
 2. 點擊瀏覽器工具列中的 CSS Inspector Pro 圖示
 3. 開啟檢查器功能，開始使用！
 
